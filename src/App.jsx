@@ -10,15 +10,18 @@ import logoImg from './assets/logo.png';
 function App() {
   const modal = useRef();
   const selectedPlace = useRef();
+  const [availablePlaces, setAvailablePlaces] = useState([])
   const [pickedPlaces, setPickedPlaces] = useState([]);
 
   // 브라우저로부터 사용자의 위치 얻기 <= Side effect (부수 효과)
+  // useEffect 훅을 사용하지 않고 이 단계에서 코드 작성을 멈추고 브라우저에 렌더링하면 무한 루프에 빠짐
   navigator.geolocation.getCurrentPosition((position) => {
     const sortedPlaces = sortPlacesByDistance(
       AVAILABLE_PLACES,
       position.coords.latitude,
       position.coords.longitude
     )
+    setAvailablePlaces(sortedPlaces)
   })
 
   function handleStartRemovePlace(id) {
@@ -73,7 +76,7 @@ function App() {
         />
         <Places
           title="Available Places"
-          places={AVAILABLE_PLACES}
+          places={availablePlaces}
           onSelectPlace={handleSelectPlace}
         />
       </main>
