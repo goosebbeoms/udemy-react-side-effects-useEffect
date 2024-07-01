@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 import Places from './components/Places.jsx';
 import { AVAILABLE_PLACES } from './data.js';
@@ -13,16 +13,18 @@ function App() {
   const [availablePlaces, setAvailablePlaces] = useState([])
   const [pickedPlaces, setPickedPlaces] = useState([]);
 
-  // 브라우저로부터 사용자의 위치 얻기 <= Side effect (부수 효과)
-  // useEffect 훅을 사용하지 않고 이 단계에서 코드 작성을 멈추고 브라우저에 렌더링하면 무한 루프에 빠짐
-  navigator.geolocation.getCurrentPosition((position) => {
-    const sortedPlaces = sortPlacesByDistance(
-      AVAILABLE_PLACES,
-      position.coords.latitude,
-      position.coords.longitude
-    )
-    setAvailablePlaces(sortedPlaces)
-  })
+  useEffect(() => {
+    // 브라우저로부터 사용자의 위치 얻기 <= Side effect (부수 효과)
+    navigator.geolocation.getCurrentPosition((position) => {
+      const sortedPlaces = sortPlacesByDistance(
+        AVAILABLE_PLACES,
+        position.coords.latitude,
+        position.coords.longitude
+      )
+      setAvailablePlaces(sortedPlaces)
+    })
+  }, [])
+
 
   function handleStartRemovePlace(id) {
     modal.current.open();
@@ -77,6 +79,8 @@ function App() {
         <Places
           title="Available Places"
           places={availablePlaces}
+          // 아직 장소 정렬이 되지 않았을 때 사용자에게 보여줄 fallback(대체) 텍스트
+          fallbackText="Sorting places by distance..."
           onSelectPlace={handleSelectPlace}
         />
       </main>
