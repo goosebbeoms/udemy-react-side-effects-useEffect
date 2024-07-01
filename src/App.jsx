@@ -7,11 +7,17 @@ import Modal from './components/Modal.jsx';
 import DeleteConfirmation from './components/DeleteConfirmation.jsx';
 import logoImg from './assets/logo.png';
 
+// 앱 전체가 실행될 때 한 번만 작동하는 것으로 충분하므로 컴포넌트 함수 안에 넣을 필요가 없음
+const storedIds = JSON.parse(localStorage.getItem('selectedPlaces')) || []
+const storedPlaces = storedIds.map((id) => {
+  return AVAILABLE_PLACES.find((place) => place.id === id)
+})
+
 function App() {
   const modal = useRef();
   const selectedPlace = useRef();
   const [availablePlaces, setAvailablePlaces] = useState([])
-  const [pickedPlaces, setPickedPlaces] = useState([]);
+  const [pickedPlaces, setPickedPlaces] = useState(storedPlaces);
 
   useEffect(() => {
     // 브라우저로부터 사용자의 위치 얻기 <= Side effect (부수 효과)
@@ -56,6 +62,9 @@ function App() {
       prevPickedPlaces.filter((place) => place.id !== selectedPlace.current)
     );
     modal.current.close();
+
+    const storedIds = JSON.parse(localStorage.getItem('selectedPlaces')) || []
+    localStorage.setItem('selectedPlaces', storedIds.filter((id) => {id !== selectedPlace.current}))
   }
 
   return (
