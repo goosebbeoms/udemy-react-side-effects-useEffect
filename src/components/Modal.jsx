@@ -10,7 +10,7 @@ function Modal({ open, children }) {
     } else {
       dialog.current.close()
     }
-  }, [])  // <- 에러 발생
+  }, [open])  // <- 에러 발생
 
   return createPortal(
     <dialog className="modal" ref={dialog} open={open}>
