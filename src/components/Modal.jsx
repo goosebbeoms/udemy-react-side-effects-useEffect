@@ -1,10 +1,16 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 function Modal({ open, children }) {
   const dialog = useRef();
 
-  dialog.current.showModal()    // 백드랍 효과
+  useEffect(() => {
+    if (open) {
+      dialog.current.showModal()
+    } else {
+      dialog.current.close()
+    }
+  }, [])  // <- 에러 발생
 
   return createPortal(
     <dialog className="modal" ref={dialog} open={open}>
